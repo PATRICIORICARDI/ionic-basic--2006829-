@@ -11,7 +11,9 @@ export class RecetaPage implements OnInit {
 
   recetas: Receta[] = [] ;
 
-  constructor(private recetaService: RecetaService) { }
+  constructor(
+    private recetaService: RecetaService
+  ) { }
 
   ngOnInit() {
     this.recetas = this.recetaService.getRecetas();
