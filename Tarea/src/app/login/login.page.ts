@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { User } from '../models/user';
 import { ModalErrorComponent } from '../componentes/modal-error/modal-error.component';
-import { ModalController } from '@ionic/angular';
+iimport { ModalController, LoadingController } from '@ionic/angular';
 import { AutService } from '../service/aut.service';
 import { Router } from '@angular/router';
 import { MenuService } from '../service/menu.service';
@@ -23,7 +23,8 @@ export class LoginPage implements OnInit {
     private modalCtrl: ModalController,
     private autSvc: AutService,
     private menu: MenuService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    public loadingController: LoadingController
   ) { }
 
   ngOnInit() {
@@ -41,12 +42,15 @@ export class LoginPage implements OnInit {
     this.autSvc.onLogin(this.user).then((user:any)=>{
       if(user!=null && user.code ==undefined){
         console.log('Successfully logged in!');
-        this.menu.setTitle("presupuesto");
-        this.router.navigate(['main/presupuesto']);
+        this.loadingController.dismiss();
+        setTimeout(() => {
+          this.menu.setTitle("presupuesto");
+          this.router.navigate(['main/presupuesto']);
+        }, 650);
       }
       else{
         if(user.code){
-          if(user.code=='auth/wrong-password' || user.code =='auth/invalid-email' || user.code=='auth/argument-error'){
+          this.loadingController.dismiss();
             this.openModal(user);
           }
         }
@@ -84,6 +88,7 @@ export class LoginPage implements OnInit {
     if(this.ionicForm.valid){
       this.user.email = this.ionicForm.get('email').value;
       this.user.password = this.ionicForm.get('password').value;
+      this.presentLoadingWithOptions();
       this.onLogin();
     }
   } 
